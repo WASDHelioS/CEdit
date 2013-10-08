@@ -17,12 +17,19 @@ commands:
   cedit list:
     description: returns a list of all commands.
     usage: /cedit list
+  cedit reload:
+    description: Reloads the config file.
+    usage: /cedit reload
   cedit add fromc [fromcommand] toc [tocommand]:
     description: adds a new command from + to
     usage: /cedit add from [fromcommand] to [tocommand]
   cedit edit fromc [fromcommand] toc [tocommand] newfromc [fromcommand] newtoc [tocommand]:
     description: edits a command to something else.
     usage: /cedit edit /[fromcommand] /[tocommand] /[newFromcommand] /[newTocommand]
+  cedit edit index <index> fromc [fromcommand] toc [tocommand]:
+    description: edits a command to something else based on the index.
+    usage: /cedit edit 
+    
   cedit remove fromc [fromcommand]:
     description: removes the fromcommand and tocommand based on fromcommand.
     usage: /cedit remove from [fromcommand]
@@ -35,20 +42,27 @@ commands:
     ##PERMISSIONS##
     
 permissions:
-  helios.*:
-    description: Gives access to all commands
+  
+  cedit.*:
+    description: Gives access to all the commands.
     children:
-      helios.standardUse: true
-      helios.manipulationUse: true
-      helios.opCommands: true
-  helios.standardUse:
-    description: the standard toggle and stuff for poke.
-    default: true
-  helios.manipulationUse:
-    description: manipulation of other players' poke function.
+      cedit.add: true
+      cedit.reload: true
+      cedit.edit: true
+      cedit.remove: true
+  cedit.add:
+    description: adds a command.
     default: op
-  helios.opCommands:
-    description: all the other commands plebians should not be able to use.
+
+  cedit.reload:
+    description: reloads CEdit.
     default: op
     
-      
+  cedit.edit:
+    description: edits a command.
+    default: op
+    
+  cedit.remove:
+    description: removes a command.
+    default: op
+    

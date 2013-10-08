@@ -4,8 +4,10 @@
  */
 package me.WASDHelioS.Handler.SubCommandHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import me.WASDHelioS.Handler.CommandHandler;
 import me.WASDHelioS.Main.Main;
 import org.bukkit.ChatColor;
@@ -78,7 +80,6 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         List<String> fromlist = getFromCommandsList(plugin.getConfiguration());
         fromlist.add(fromcommand);
         plugin.getConfiguration().set("cedit.fromcommand", fromlist);
-
     }
 
     /**
@@ -191,6 +192,32 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         return command;
     }
 
+    private List<String> getCommandArgs(String[] arguments) {
+        ArrayList<String> returnList = new ArrayList<>();
+        List<String> args = Arrays.asList(arguments);
+        String command = null;
+
+
+        for (int i = 0; i < args.size(); i++) {
+            if (args.get(i).startsWith("/")) {
+                if(command != null) {
+                    returnList.add(command);
+                
+                }
+                command = args.get(i).substring(1);
+            } else {
+                if (command != null) {
+                    command = command + " " + args.get(i);
+                }
+            }
+        }
+        if (command != null) {
+            returnList.add(command);
+        }
+
+        return returnList;
+    }
+
     /**
      *
      * Gets all the words in between specified keywords
@@ -283,34 +310,49 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         return false;
     }
 
+    //TODO : ADD RELOADING, REVISE EVERYTHING WITH THE NEW METHOD OF USING FORWARD - SLASHES INSTEAD OF TOC AND FROMC ETC., ADD INDEX EDITING.
     private void handleCEditCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if (sender.hasPermission("helios.opCommands")) {
-            if (args.length < 1) {
-                sender.sendMessage(ChatColor.GOLD + CEdit + "CEdit command editor. type /CEdit help or /CEdit ? for commands.");
-            } else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")) {
-                    sendCEditHelpMessage(sender);
-                } else if (args[0].equalsIgnoreCase("list")) {
-                    sendList(sender);
-                }
-            } else if (args.length > 1) {
-                if (args[0].equalsIgnoreCase("add") && checkIfKeywordExists("fromc", args) && checkIfKeywordExists("toc", args)) {
+
+        if (args.length < 1) {
+            sender.sendMessage(ChatColor.GOLD + CEdit + "CEdit command editor. type /CEdit help or /CEdit ? for commands.");
+        } else if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")) {
+                sendCEditHelpMessage(sender);
+            } else if (args[0].equalsIgnoreCase("list")) {
+                sendList(sender);
+            }
+        } else if (args.length > 1) {
+
+
+
+            if (args[0].equalsIgnoreCase("add")) {
+
+                if (sender.hasPermission("cedit.add")) {
+
+
                     if (!checkIfToCommandExists(getCommandArgs("toc", args))) {
-                        if (!getCommandArgs("toc", args).equalsIgnoreCase("") && !getCommandArgs("fromc", "toc", args).equalsIgnoreCase("")) {
+                        if (!getCommandArgs(args).contains("") || !getCommandArgs(args).contains(null)) {
+                            if (getCommandArgs(args).size() == 2) {
+                                addFromCommand(getCommandArgs(args).get(0));
+                                addToCommand(getCommandArgs(args).get(1));
 
-                            addFromCommand(getCommandArgs("fromc", "toc", args));
-                            addToCommand(getCommandArgs("toc", args));
+                                saveConfiguration(plugin);
 
-                            saveConfiguration(plugin);
-
-                            sender.sendMessage(ChatColor.GOLD + CEdit + "Command added : from " + getCommandArgs("fromc", "toc", args) + " to " + getCommandArgs("toc", args));
+                                sender.sendMessage(ChatColor.GOLD + CEdit + "Command added : from " + getCommandArgs(args).get(0) + " to " + getCommandArgs( args).get(1));
+                            } else {
+                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Invalid amount of arguments!");
+                            }
                         } else {
                             sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "You cannot add empty commands!");
                         }
                     } else {
                         sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This ToCommand already exists!");
                     }
-                } else if (args[0].equalsIgnoreCase("remove")) {
+                } else {
+                    sender.sendMessage(ChatColor.RED + "You do not have permission!");
+                }
+            } else if (args[0].equalsIgnoreCase("remove")) {
+                if (sender.hasPermission("cedit.remove")) {
                     if (args[1].equalsIgnoreCase("fromc")) {
                         if (checkIfFromCommandExists(getCommandArgs("fromc", args))) {
                             if (!getCommandArgs("fromc", args).equalsIgnoreCase("")) {
@@ -344,8 +386,14 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
 
                         sender.sendMessage(ChatColor.RED + "This command does not exist!");
                     }
-                } else if (args[0].equalsIgnoreCase("edit") && checkIfKeywordExists("fromc", args) && checkIfKeywordExists("toc", args)
-                        && checkIfKeywordExists("newfromc", args) && checkIfKeywordExists("newtoc", args)) {
+                } else {
+                    sender.sendMessage(ChatColor.RED + "You do not have permission!");
+                }
+            } else if (args[0].equalsIgnoreCase("edit") && checkIfKeywordExists("fromc", args) && checkIfKeywordExists("toc", args)
+                    && checkIfKeywordExists("newfromc", args) && checkIfKeywordExists("newtoc", args)) {
+
+                if (sender.hasPermission("cedit.edit")) {
+
                     if (checkIfFromCommandExists(getCommandArgs("fromc", "toc", args)) && checkIfToCommandExists(getCommandArgs("toc", "newfromc", args))) {
                         if (!checkIfToCommandExists(getCommandArgs("newtoc", args))) {
                             if (!getCommandArgs("fromc", "toc", args).equalsIgnoreCase("") && !getCommandArgs("toc", "newfromc", args).equalsIgnoreCase("")
@@ -367,16 +415,15 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                         sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This command is not registered!");
                     }
 
-
-
                 } else {
-                    sender.sendMessage(ChatColor.RED + "This command does not exist!");
+                    sender.sendMessage(ChatColor.RED + "You do not have permission!");
                 }
+
             } else {
                 sender.sendMessage(ChatColor.RED + "This command does not exist!");
             }
         } else {
-            sender.sendMessage(ChatColor.RED + "You do not have permission!");
+            sender.sendMessage(ChatColor.RED + "This command does not exist!");
         }
     }
 
