@@ -329,16 +329,17 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
 
                 if (sender.hasPermission("cedit.add")) {
 
-
                     if (!checkIfToCommandExists(getCommandArgs("toc", args))) {
-                        if (!getCommandArgs(args).contains("") || !getCommandArgs(args).contains(null)) {
-                            if (getCommandArgs(args).size() == 2) {
-                                addFromCommand(getCommandArgs(args).get(0));
-                                addToCommand(getCommandArgs(args).get(1));
+                        List<String> commands = getCommandArgs(args);
+                        
+                        if (!commands.contains("") || !commands.contains(null)) {
+                            if (commands.size() == 2) {
+                                addFromCommand(commands.get(0));
+                                addToCommand(commands.get(1));
 
                                 saveConfiguration(plugin);
 
-                                sender.sendMessage(ChatColor.GOLD + CEdit + "Command added : from " + getCommandArgs(args).get(0) + " to " + getCommandArgs( args).get(1));
+                                sender.sendMessage(ChatColor.GOLD + CEdit + "Command added : from " + commands.get(0) + " to " + commands.get(1));
                             } else {
                                 sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Invalid amount of arguments!");
                             }
