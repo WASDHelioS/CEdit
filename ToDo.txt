@@ -1,0 +1,10 @@
+- CATCH ERRORS IN CREATING A NEW CEDIT COMMAND (RIGHT NOW, PEOPLE CAN JUST USE /CEDIT ADD FROMC 'some command' TOC 'some other command' 
+						, AS WELL AS THEY CAN USE /CEDIT ADD TOC 'some command' FROMC 'some other command'. THIS WOULD CREATE A FAULTY TOC, E.G.
+							cedit:
+							  tocommand: -some command fromc some other command
+						          fromcommand: some other command )
+		(Possibly make sure that the previous command is the right one, e.g. if(last-command.equalsIgnoreCase('fromc')) or someth.
+		OR create a new method isBefore(String[] args, string before, string after))
+
+- Reload command
+- Permissions
