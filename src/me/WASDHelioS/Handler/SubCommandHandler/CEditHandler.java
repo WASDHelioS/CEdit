@@ -7,7 +7,6 @@ package me.WASDHelioS.Handler.SubCommandHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import me.WASDHelioS.Handler.CommandHandler;
 import me.WASDHelioS.Main.Main;
 import org.bukkit.ChatColor;
@@ -22,6 +21,8 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class CEditHandler extends CommandHandler implements CommandExecutor {
 
+    private static final String locfrom = "cedit.fromcommand";
+    private static final String locto = "cedit.tocommand";
     private Main plugin;
     private String CEdit = "[CEdit] ";
 
@@ -69,6 +70,104 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         } else {
             sender.sendMessage(ChatColor.RED + CEdit + "ERROR! FromCommand and ToCommand aren't the same size. check the config file and fix this!");
         }
+    }
+
+    private void addCommand(String cmd, String loc) {
+        List<String> list = plugin.getConfiguration().getStringList(loc);
+        list.add(cmd);
+        plugin.getConfiguration().set(loc, list);
+    }
+
+    /**
+     *
+     * Removes a command.
+     *
+     * @param cmd command which is the input.
+     * @param loc Location of which list it is (if fromc, loc = locfrom; if toc,
+     * loc = locto)
+     */
+    private void removeCommand(String cmd, String loc) {
+        List<String> list = plugin.getConfiguration().getStringList(loc);
+        String locSecond;
+        if (loc.equalsIgnoreCase(locfrom)) {
+            locSecond = locfrom;
+        } else {
+            locSecond = locto;
+        }
+        List<String> listsecond = plugin.getConfiguration().getStringList(locSecond);
+
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equalsIgnoreCase(cmd)) {
+                list.remove(i);
+                listsecond.remove(i);
+            }
+        }
+        plugin.getConfiguration().set(loc, list);
+        plugin.getConfiguration().set(locSecond, listsecond);
+    }
+
+    /**
+     * Removes a command based on the index.
+     *
+     * @param index index of the command
+     * @param loc Location of which list it is(if fromc, loc = locFrom, if toc,
+     * loc = locTo)
+     */
+    private void removeCommand(int index, String loc) {
+        List<String> list = plugin.getConfiguration().getStringList(loc);
+        String locSecond;
+        if (loc.equalsIgnoreCase(locfrom)) {
+            locSecond = locfrom;
+        } else {
+            locSecond = locto;
+        }
+        List<String> listSecond = plugin.getConfiguration().getStringList(locSecond);
+        list.remove(index);
+        listSecond.remove(index);
+
+        plugin.getConfiguration().set(loc, list);
+        plugin.getConfiguration().set(locSecond, listSecond);
+    }
+
+    private void replaceCommand(String[] cmds) {
+        List<String> fromList = plugin.getConfiguration().getStringList(locfrom);
+        List<String> toList = plugin.getConfiguration().getStringList(locto);
+
+        int index = -1;
+        int iCheck = -1;
+        for (int i = 0; i < fromList.size(); i++) {
+            if (fromList.get(i).equalsIgnoreCase(cmds[0])) {
+                index = i;
+                break;
+            }
+        }
+        for (int i = 0; i < toList.size(); i++) {
+            if (toList.get(i).equalsIgnoreCase(cmds[1])) {
+                iCheck = i;
+                break;
+            }
+        }
+
+        if (index != -1 && iCheck != -1) {
+            if (index == iCheck) {
+                fromList.set(index, cmds[2]);
+                toList.set(index, cmds[3]);
+
+                plugin.getConfiguration().set(locfrom, fromList);
+                plugin.getConfiguration().set(locto, toList);
+            }
+        }
+    }
+
+    private void replaceCommand(int index, String[] cmds) {
+        List<String> fromList = plugin.getConfiguration().getStringList(locfrom);
+        List<String> toList = plugin.getConfiguration().getStringList(locto);
+
+        fromList.set(index, cmds[0]);
+        toList.set(index, cmds[1]);
+
+        plugin.getConfiguration().set(locfrom, fromList);
+        plugin.getConfiguration().set(locto, toList);
     }
 
     /**
@@ -200,9 +299,9 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
 
         for (int i = 0; i < args.size(); i++) {
             if (args.get(i).startsWith("/")) {
-                if(command != null) {
+                if (command != null) {
                     returnList.add(command);
-                
+
                 }
                 command = args.get(i).substring(1);
             } else {
@@ -331,11 +430,11 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
 
                     if (!checkIfToCommandExists(getCommandArgs("toc", args))) {
                         List<String> commands = getCommandArgs(args);
-                        
+
                         if (!commands.contains("") || !commands.contains(null)) {
                             if (commands.size() == 2) {
-                                addFromCommand(commands.get(0));
-                                addToCommand(commands.get(1));
+                                addCommand(commands.get(0), locfrom);
+                                addCommand(commands.get(1), locto);
 
                                 saveConfiguration(plugin);
 
@@ -355,34 +454,45 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("remove")) {
                 if (sender.hasPermission("cedit.remove")) {
                     if (args[1].equalsIgnoreCase("fromc")) {
-                        if (checkIfFromCommandExists(getCommandArgs("fromc", args))) {
-                            if (!getCommandArgs("fromc", args).equalsIgnoreCase("")) {
+                        List<String> commands = getCommandArgs(args);
+                        if (commands != null) {
+                            if (checkIfFromCommandExists(commands.get(0))) {
+                                if (!commands.get(0).equalsIgnoreCase("")) {
 
-                                removeFromCommand(getCommandArgs("fromc", args));
-                                saveConfiguration(plugin);
+                                    removeCommand(commands.get(0), locfrom);
+                                    saveConfiguration(plugin);
 
-                                sender.sendMessage(ChatColor.GOLD + CEdit + "FromCommand " + getCommandArgs("fromc", args) + " and the corresponding tocommand have been removed!");
+                                    sender.sendMessage(ChatColor.GOLD + CEdit + "FromCommand " + commands.get(0) + " and the corresponding tocommand have been removed!");
+                                } else {
+                                    sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments!");
+                                }
                             } else {
-                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments!");
+                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This FromCommand is not registered!");
                             }
                         } else {
-                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This FromCommand is not registered!");
+                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments! Did you forget to use a '/' in your command?");
                         }
 
                     } else if (args[1].equalsIgnoreCase("toc")) {
-                        if (checkIfToCommandExists(getCommandArgs("toc", args))) {
-                            if (!getCommandArgs("toc", args).equalsIgnoreCase("")) {
+                        List<String> commands = getCommandArgs(args);
+                        if (commands != null) {
+                            if (checkIfToCommandExists(commands.get(0))) {
+                                if (!commands.get(0).equalsIgnoreCase("")) {
 
-                                removeToCommand(getCommandArgs("toc", args));
-                                saveConfiguration(plugin);
+                                    removeCommand(commands.get(0), locto);
+                                    saveConfiguration(plugin);
 
-                                sender.sendMessage(ChatColor.GOLD + CEdit + "ToCommand " + getCommandArgs("toc", args) + " and the corresponding fromcommand have been removed!");
+                                    sender.sendMessage(ChatColor.GOLD + CEdit + "ToCommand " + commands.get(0) + " and the corresponding fromcommand have been removed!");
+                                } else {
+                                    sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments!");
+                                }
                             } else {
-                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments!");
+                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This ToCommand is not registered!");
                             }
                         } else {
-                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This ToCommand is not registered!");
+                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments! Did you forget to use a '/' in your command?");
                         }
+
                     } else {
 
                         sender.sendMessage(ChatColor.RED + "This command does not exist!");
