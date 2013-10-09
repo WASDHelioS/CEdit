@@ -7,7 +7,6 @@ commands:
   cedit:
     description: placeholder
     usage: /cedit
-    
   cedit help:
     description: returns help message
     usage: /cedit help
@@ -20,22 +19,24 @@ commands:
   cedit reload:
     description: Reloads the config file.
     usage: /cedit reload
-  cedit add fromc [fromcommand] toc [tocommand]:
+  cedit add /[fromcommand] /[tocommand]:
     description: adds a new command from + to
-    usage: /cedit add from [fromcommand] to [tocommand]
-  cedit edit fromc [fromcommand] toc [tocommand] newfromc [fromcommand] newtoc [tocommand]:
+    usage: /cedit add /[fromcommand] /[tocommand]
+  cedit edit /[fromcommand] /[tocommand] /[new fromcommand] /[new tocommand]:
     description: edits a command to something else.
     usage: /cedit edit /[fromcommand] /[tocommand] /[newFromcommand] /[newTocommand]
-  cedit edit index <index> fromc [fromcommand] toc [tocommand]:
+  cedit edit index <index> /[fromcommand] /[tocommand]:
     description: edits a command to something else based on the index.
     usage: /cedit edit 
-    
   cedit remove fromc [fromcommand]:
     description: removes the fromcommand and tocommand based on fromcommand.
     usage: /cedit remove from [fromcommand]
   cedit remove toc [tocommand]:
     description: removes the tocommand and fromcommand based on tocommand.
     usage: /cedit remove to [tocommand]
+  cedit remove index [index]:
+    description: removes the tocommand and fromcommand based on index.
+    usage: /cedit remove index [index]
     #OTHER
     
     

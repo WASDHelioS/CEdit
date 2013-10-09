@@ -72,7 +72,6 @@ public class Main extends JavaPlugin {
             this.saveDefaultConfig();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("cedit.*")) {
-
                     Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[CEdit] A NEW CONFIG FILE HAS BEEN CREATED!!");
                 }
             }
@@ -80,7 +79,7 @@ public class Main extends JavaPlugin {
             resetConfig();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("cedit.*")) {
-                    Bukkit.getServer().broadcastMessage(ChatColor.RED + "[CEdit] YOUR CONFIG FILE HAS BEEN RESET DUE TO ERORS! ");
+                    Bukkit.getServer().broadcastMessage(ChatColor.RED + "[CEdit] YOUR CONFIG FILE HAS BEEN RESET DUE TO ERRORS! ");
                 }
             }
         }
