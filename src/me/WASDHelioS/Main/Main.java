@@ -71,16 +71,16 @@ public class Main extends JavaPlugin {
             this.config.options().copyDefaults();
             this.saveDefaultConfig();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.hasPermission("helios.opCommands")) {
+                if (player.hasPermission("cedit.*")) {
 
-                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MassivePackage] A NEW CONFIG FILE HAS BEEN CREATED!!");
+                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[CEdit] A NEW CONFIG FILE HAS BEEN CREATED!!");
                 }
             }
         } else if (cfH.isConfigEmptyValues(config)) {
             resetConfig();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.hasPermission("helios.opCommands")) {
-                    Bukkit.getServer().broadcastMessage(ChatColor.RED + "[MassivePackage] YOUR CONFIG FILE HAS BEEN RESET DUE TO ERORS! ");
+                if (player.hasPermission("cedit.*")) {
+                    Bukkit.getServer().broadcastMessage(ChatColor.RED + "[CEdit] YOUR CONFIG FILE HAS BEEN RESET DUE TO ERORS! ");
                 }
             }
         }
