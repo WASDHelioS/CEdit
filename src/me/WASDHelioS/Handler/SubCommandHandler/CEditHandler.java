@@ -500,6 +500,7 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                 } else {
                     sender.sendMessage(ChatColor.RED + "You do not have permission!");
                 }
+                //TODO --  CHANGE THIS TO APPROPRIATE METHODS
             } else if (args[0].equalsIgnoreCase("edit") && checkIfKeywordExists("fromc", args) && checkIfKeywordExists("toc", args)
                     && checkIfKeywordExists("newfromc", args) && checkIfKeywordExists("newtoc", args)) {
 
