@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -23,7 +22,7 @@ public class Main extends JavaPlugin {
 
     private FileConfiguration config;
     private ConfigHandler cfH = new ConfigHandler(this);
-    
+
     public void onEnableNoSending() {
         createConfig();
         reloadConfig();
@@ -37,54 +36,50 @@ public class Main extends JavaPlugin {
         reloadConfig();
 
         getLogger().info("[CEdit] is now enabled!");
-        
+
         config.options().copyDefaults(true);
         saveDefaultConfig();
     }
-    
+
     @Override
     public void onEnable() {
         config = this.getConfig();
         onEnableEss();
-        
+
         getServer().getPluginManager().registerEvents(new CommandPreProcessListener(this), this);
-        
+
         getCommand("CEdit").setExecutor(new CEditHandler(this));
     }
-    
+
     @Override
     public void onDisable() {
         getLogger().info("[CEdit] is now disabled!");
     }
-    
+
     public FileConfiguration getConfiguration() {
         return config;
     }
-    
+
     public ConfigHandler getConfigHandler() {
         return cfH;
     }
-    
+
     private void createConfig() {
         File configfile = new File(getDataFolder(), "config.yml");
         if (!configfile.exists()) {
             this.config.options().copyDefaults();
             this.saveDefaultConfig();
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.hasPermission("cedit.*")) {
-                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[CEdit] A NEW CONFIG FILE HAS BEEN CREATED!!");
-                }
-            }
+
+            Bukkit.getServer().broadcast(ChatColor.GREEN + "[CEdit] A NEW CONFIG FILE HAS BEEN CREATED!!", "cedit.*");
+
         } else if (cfH.isConfigEmptyValues(config)) {
             resetConfig();
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.hasPermission("cedit.*")) {
-                    Bukkit.getServer().broadcastMessage(ChatColor.RED + "[CEdit] YOUR CONFIG FILE HAS BEEN RESET DUE TO ERRORS! ");
-                }
-            }
+
+            Bukkit.getServer().broadcast(ChatColor.RED + "[CEdit] YOUR CONFIG FILE HAS BEEN RESET DUE TO ERRORS! ", "cedit.*");
+
         }
     }
-    
+
     public void resetConfig() {
         File conf = new File(getDataFolder(), "config.yml");
         conf.delete();
@@ -93,9 +88,9 @@ public class Main extends JavaPlugin {
     }
 
     /**
-     * Reloads the config differently from reloadConfig().
-     * this one gets the file in the plugin directory and loads that one.
-     * (In use for runtime reloading.)
+     * Reloads the config differently from reloadConfig(). this one gets the
+     * file in the plugin directory and loads that one. (In use for runtime
+     * reloading.)
      */
     public void reloadConfigAlt() {
         File conf = new File(getDataFolder(), "config.yml");
