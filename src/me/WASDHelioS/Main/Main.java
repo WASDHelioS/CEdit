@@ -23,6 +23,9 @@ public class Main extends JavaPlugin {
     private FileConfiguration config;
     private ConfigHandler cfH = new ConfigHandler(this);
 
+    /**
+     * refreshes the config without sending a confirm message (Useful in reloading).
+     */
     public void onEnableNoSending() {
         createConfig();
         reloadConfig();
@@ -30,6 +33,9 @@ public class Main extends JavaPlugin {
         saveDefaultConfig();
     }
 
+    /**
+     * Refreshes the config with confirmation.
+     */
     public void onEnableEss() {
 
         createConfig();
@@ -56,14 +62,27 @@ public class Main extends JavaPlugin {
         getLogger().info("[CEdit] is now disabled!");
     }
 
+    /**
+     * Gets current configuration.
+     * @return Current configuration.
+     */
     public FileConfiguration getConfiguration() {
         return config;
     }
 
+    /**
+     * Gets this instance of ConfigHandler.
+     * @return ConfigHandler.
+     */
     public ConfigHandler getConfigHandler() {
         return cfH;
     }
 
+    /**
+     * Creates a new config IF IT HAS TO. 
+     * Either it be that the current config file contains errors (empty values)
+     * Or the config doesn't exist locally.
+     */
     private void createConfig() {
         File configfile = new File(getDataFolder(), "config.yml");
         if (!configfile.exists()) {
@@ -80,6 +99,9 @@ public class Main extends JavaPlugin {
         }
     }
 
+    /**
+     * Resets the config by deleting the old file and creating a new one.
+     */
     public void resetConfig() {
         File conf = new File(getDataFolder(), "config.yml");
         conf.delete();

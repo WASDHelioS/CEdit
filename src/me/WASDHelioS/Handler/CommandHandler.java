@@ -20,6 +20,10 @@ public abstract class CommandHandler {
     public CommandHandler() {
     }
     
+    /**
+     * Saves the current state of the plugin. Required for runtime editing.
+     * @param plugin Main class.
+     */
     protected void saveConfiguration(Main plugin) {
         File file = new File(plugin.getDataFolder(), "config.yml");
         try {

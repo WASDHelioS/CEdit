@@ -43,11 +43,17 @@ public class ConfigHandler {
         return false;
     }
 
+    /**
+     * Reloads the configuration file.
+     */
     public void reloadCommands() {
         plugin.reloadConfigAlt();
         plugin.onEnableEss();
     }
 
+    /**
+     * Reloads the configuration file without sending a message.
+     */
     public void reloadCommandsAlt() {
         plugin.reloadConfigAlt();
         plugin.onEnableNoSending();
