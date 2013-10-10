@@ -280,6 +280,15 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         return false;
     }
 
+    private boolean checkIfListHasAnEmptyValue(List<String> args) {
+        for (String string : args) {
+            if (string.equalsIgnoreCase("") || string.equalsIgnoreCase(" ")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void handleCEditCommand(CommandSender sender, String[] args) {
         if (args.length < 1) {
             sender.sendMessage(ChatColor.GOLD + CEdit + "CEdit command editor. type /CEdit help or /CEdit ? for commands.");
@@ -310,7 +319,7 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                     if (sender.hasPermission("cedit.add")) {
                         List<String> commands = getCommandArgs(args);
                         if (!getCommandArgs(args).isEmpty()) {
-                            if (!commands.contains("") || !commands.contains(null)) {
+                            if (!commands.contains("") && !commands.contains(null) && !checkIfListHasAnEmptyValue(commands)) {
                                 if (commands.size() == 2) {
                                     if (!checkIfToCommandExists(getCommandArgs(args).get(1))) {
 
@@ -352,28 +361,33 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                             if (index > -1) {
                                 List<String> commands = getCommandArgs(args);
                                 if (commands.size() == 2 && !commands.contains(null)) {
-                                    if (!commands.contains("")) {
-                                        if (!checkIfToCommandExists(commands.get(1))) {
-                                            if (getFromCommandsList(plugin.getConfiguration()).size() >= index - 1) {
+                                    if (!checkIfListHasAnEmptyValue(commands)) {
+                                        if (!commands.contains("")) {
+                                            if (!checkIfToCommandExists(commands.get(1))) {
+                                                if (getFromCommandsList(plugin.getConfiguration()).size() >= index - 1) {
 
-                                                replaceCommand(index - 1, commands);
+                                                    replaceCommand(index - 1, commands);
 
-                                                saveConfiguration(plugin);
+                                                    saveConfiguration(plugin);
 
-                                                sender.sendMessage(ChatColor.GOLD + CEdit + "Commands edited on index " + (index) + " to /" + commands.get(0) + " /" + commands.get(1));
+                                                    sender.sendMessage(ChatColor.GOLD + CEdit + "Commands edited on index " + (index) + " to /" + commands.get(0) + " /" + commands.get(1));
 
+                                                } else {
+                                                    sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "The index is bigger than the size of the list!");
+                                                }
                                             } else {
-                                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "The index is bigger than the size of the list!");
+                                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This command already exists!");
                                             }
                                         } else {
-                                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This command already exists!");
+                                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Invalid amount of arguments!");
                                         }
                                     } else {
-                                        sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Invalid amount of arguments!");
+                                        sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Cannot add empty commands!");
                                     }
                                 } else {
                                     sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Invalid amount of arguments!");
                                 }
+
                             } else {
                                 sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Negative values aren't allowed!");
                             }
@@ -384,7 +398,7 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
 
                             List<String> commands = getCommandArgs(args);
                             if (commands.size() == 4 && !commands.contains(null)) {
-                                if (!commands.contains("")) {
+                                if (!commands.contains("") && !checkIfListHasAnEmptyValue(commands)) {
                                     if (checkIfFromCommandExists(commands.get(0)) && checkIfToCommandExists(commands.get(1)) && !checkIfToCommandExists(commands.get(3))) {
                                         replaceCommand(commands);
 
@@ -404,6 +418,7 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                     } else {
                         sender.sendMessage(ChatColor.RED + "You do not have permission!");
                     }
+
                     break;
                 //Remove statement.
                 case "remove":
@@ -482,12 +497,14 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                     } else {
                         sender.sendMessage(ChatColor.RED + "You do not have permission!");
                     }
+
                     break;
                 //Remap statement.
                 case "remap":
-                    if (sender.hasPermission("cedit.edit")) {
+                    if (sender.hasPermission(
+                            "cedit.edit")) {
                         List<String> commands = getCommandArgs(args);
-                        if (commands != null && !commands.isEmpty() && !commands.contains(null)) {
+                        if (commands != null && !commands.isEmpty() && !commands.contains(null) && !checkIfListHasAnEmptyValue(commands)) {
                             if (checkIfToCommandExists(commands.get(0))) {
                                 if (!commands.get(0).equalsIgnoreCase("")) {
                                     if (commands.size() == 2) {
@@ -510,9 +527,12 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                     } else {
                         sender.sendMessage(ChatColor.RED + "You do not have permission!");
                     }
+
                     break;
                 default:
-                    sender.sendMessage(ChatColor.RED + "This command does not exist!");
+                    sender.sendMessage(ChatColor.RED
+                            + "This command does not exist!");
+
                     break;
             }
         } else {
