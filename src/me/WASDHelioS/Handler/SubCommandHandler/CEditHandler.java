@@ -173,6 +173,26 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         }
     }
 
+    private void replaceCommandToC(List<String> cmds) {
+        List<String> fromList = getFromCommandsList(plugin.getConfiguration());
+        List<String> toList = getToCommandsList(plugin.getConfiguration());
+
+        int index = -1;
+
+        for (int i = 0; i < toList.size(); i++) {
+            if (toList.get(i).equalsIgnoreCase(cmds.get(0))) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1) {
+            fromList.set(index, cmds.get(1));
+
+            plugin.getConfiguration().set(locfrom, fromList);
+        }
+    }
+
     /**
      * Replaces a command at a specific index.
      *
@@ -219,10 +239,10 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
             returnList.add(command);
         }
 
-        for(int i = 0; i < returnList.size(); i++) {
+        for (int i = 0; i < returnList.size(); i++) {
             returnList.set(i, returnList.get(i).trim().replaceAll(" +", " "));
         }
-        
+
         return returnList;
     }
 
@@ -456,9 +476,36 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                                     sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "The index is bigger than the size of the list!");
                                 }
                                 break;
-
                             default:
                                 sender.sendMessage(ChatColor.RED + "This command does not exist!");
+                        }
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "You do not have permission!");
+                    }
+                    break;
+                //Remap statement.
+                case "remap":
+                    if (sender.hasPermission("cedit.edit")) {
+                        List<String> commands = getCommandArgs(args);
+                        if (commands != null && !commands.isEmpty() && !commands.contains(null)) {
+                            if (checkIfToCommandExists(commands.get(0))) {
+                                if (!commands.get(0).equalsIgnoreCase("")) {
+                                    if (commands.size() == 2) {
+                                        replaceCommandToC(commands);
+                                        saveConfiguration(plugin);
+
+                                        sender.sendMessage(ChatColor.GOLD + CEdit + "The command " + commands.get(0) + " has been remapped to execute " + commands.get(1) + "!");
+                                    } else {
+                                        sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments! Did you forget a '/'?");
+                                    }
+                                } else {
+                                    sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments! Did you forget a '/'?");
+                                }
+                            } else {
+                                sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This toCommand does not exist!");
+                            }
+                        } else {
+                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Too few arguments! Did you forget a '/'?");
                         }
                     } else {
                         sender.sendMessage(ChatColor.RED + "You do not have permission!");
