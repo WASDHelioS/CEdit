@@ -539,12 +539,13 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         sender.sendMessage(ChatColor.GOLD + "/CEdit ? : Alias for help.");
         sender.sendMessage(ChatColor.GOLD + "/CEdit list : returns a list of all from and to commands.");
         sender.sendMessage(ChatColor.GOLD + "/CEdit reload : Reloads this plugin.");
-        sender.sendMessage(ChatColor.GOLD + "/CEdit add /[from command] /[to command] : Adds a command.");
-        sender.sendMessage(ChatColor.GOLD + "/CEdit edit /[fromcommand] /[tocommand] /[new fromcommand] /[new tocommand] : edits a command. first from and to : "
+        sender.sendMessage(ChatColor.GOLD + "/CEdit add /<from command> /<to command> : Adds a command.");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit edit /<fromcommand> /<tocommand> /<new fromcommand> /<new tocommand> : edits a command. first from and to : "
                 + "the registered commands. second from and to : the command to replace them with.");
-        sender.sendMessage(ChatColor.GOLD + "/CEdit edit index [index] /[new fromcommand] /[new tocommand]");
-        sender.sendMessage(ChatColor.GOLD + "/CEdit remove fromc [fromCommand] : removes the command based on the fromcommand.");
-        sender.sendMessage(ChatColor.GOLD + "/CEdit remove toc [toCommand] : removes the command based on the toCommand.");
-        sender.sendMessage(ChatColor.GOLD + "/CEdit remove index [index] : Removes the command based on the index. (retrievable by list)");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit edit index <index> /<new fromcommand> /<new tocommand> : edits the command at the specified index (retrievable by list)");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit remap /<existing tocommand> /<new fromcommand> : Maps the existing tocommand to a new fromcommand. (Replaces the old one.)");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit remove fromc <fromCommand> : removes the command based on the fromcommand.");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit remove toc <toCommand> : removes the command based on the toCommand.");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit remove index <index> : Removes the command based on the index. (retrievable by list)");
     }
 }
