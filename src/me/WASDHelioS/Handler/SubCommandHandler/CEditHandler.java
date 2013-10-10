@@ -219,6 +219,10 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
             returnList.add(command);
         }
 
+        for(int i = 0; i < returnList.size(); i++) {
+            returnList.set(i, returnList.get(i).trim().replaceAll(" +", " "));
+        }
+        
         return returnList;
     }
 
