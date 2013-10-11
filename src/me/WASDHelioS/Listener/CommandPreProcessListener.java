@@ -53,7 +53,16 @@ public class CommandPreProcessListener implements Listener {
                 if (fromcommand.size() == tocommand.size()) {
 
                     Player player = ev.getPlayer();
-                    Bukkit.dispatchCommand(player, fromcommand.get(i));
+                    if (fromcommand.get(i).contains("&")) {
+                        String[] commands = fromcommand.get(i).split("&");
+                        for (int j = 0; j < commands.length; j++) {
+                            if (!commands[j].isEmpty() && !commands[j].equalsIgnoreCase("")) {
+                                Bukkit.dispatchCommand(player, commands[j]);
+                            }
+                        }
+                    } else {
+                        Bukkit.dispatchCommand(player, fromcommand.get(i));
+                    }
                     ev.setCancelled(true);
                     return;
                 } else if (fromcommand.size() > tocommand.size()) {
@@ -65,7 +74,6 @@ public class CommandPreProcessListener implements Listener {
                             + "You possibly mapped to-commands to the wrong from-command or vice-versa.");
                     return;
                 }
-
             }
         }
     }

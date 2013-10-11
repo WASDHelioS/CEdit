@@ -226,9 +226,9 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
             if (args.get(i).startsWith("/")) {
                 if (command != null) {
                     returnList.add(command);
-
                 }
                 command = args.get(i).substring(1);
+
             } else {
                 if (command != null) {
                     command = command + " " + args.get(i);
@@ -289,6 +289,15 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         return false;
     }
 
+    private boolean checkIfListHasAnAndChar(List<String> args) {
+        for (String string : args) {
+            if (string.contains("&")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void handleCEditCommand(CommandSender sender, String[] args) {
         if (args.length < 1) {
             sender.sendMessage(ChatColor.GOLD + CEdit + "CEdit command editor. type /CEdit help or /CEdit ? for commands.");
@@ -332,6 +341,29 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                                     } else {
                                         sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This ToCommand already exists!");
                                     }
+                                } else if (checkIfListHasAnAndChar(commands)) {
+                                    if (!checkIfToCommandExists(commands.get(0))) {
+                                        if (!args[0].equalsIgnoreCase("&") && !args[1].equalsIgnoreCase("&") && !args[2].equalsIgnoreCase("&")) {
+                                            addCommand(commands.get(0), locto);
+                                            String commandfrom = null;
+                                            for (int i = 1; i < commands.size(); i++) {
+                                                if (commands.get(i) != null) {
+                                                    if (commandfrom == null) {
+                                                        commandfrom = commands.get(i);
+                                                    } else {
+                                                        commandfrom = commandfrom + commands.get(i);
+                                                    }
+                                                }
+                                            }
+                                            addCommand(commandfrom, locfrom);
+                                            saveConfiguration(plugin);
+                                            sender.sendMessage(ChatColor.GOLD + CEdit + "Command added : to " + commands.get(0) + " from " + commandfrom);
+                                        } else {
+                                            sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Faulty formatting! Did you misplace an '&'?");
+                                        }
+                                    } else {
+                                        sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "This ToCommand already exists!");
+                                    }
                                 } else {
                                     sender.sendMessage(ChatColor.GOLD + CEdit + ChatColor.RED + "Invalid amount of arguments!");
                                 }
@@ -348,6 +380,8 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
                     break;
 
                 //Edit statement.
+
+
                 case "edit":
                     if (sender.hasPermission("cedit.edit")) {
                         if (args[1].equalsIgnoreCase("index")) {
@@ -560,6 +594,7 @@ public class CEditHandler extends CommandHandler implements CommandExecutor {
         sender.sendMessage(ChatColor.GOLD + "/CEdit list : returns a list of all from and to commands.");
         sender.sendMessage(ChatColor.GOLD + "/CEdit reload : Reloads this plugin.");
         sender.sendMessage(ChatColor.GOLD + "/CEdit add /<from command> /<to command> : Adds a command.");
+        sender.sendMessage(ChatColor.GOLD + "/CEdit add /<to command> /<from command> & /<from command> etc : adds multiple commands to one.");
         sender.sendMessage(ChatColor.GOLD + "/CEdit edit /<fromcommand> /<tocommand> /<new fromcommand> /<new tocommand> : edits a command. first from and to : "
                 + "the registered commands. second from and to : the command to replace them with.");
         sender.sendMessage(ChatColor.GOLD + "/CEdit edit index <index> /<new fromcommand> /<new tocommand> : edits the command at the specified index (retrievable by list)");
