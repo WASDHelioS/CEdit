@@ -6,7 +6,7 @@ package me.WASDHelioS.Main;
 
 import java.io.File;
 import me.WASDHelioS.Handler.ConfigHandler;
-import me.WASDHelioS.Handler.SubCommandHandler.CEditHandler;
+import me.WASDHelioS.Handler.CEditHandler;
 import me.WASDHelioS.Listener.CommandPreProcessListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
