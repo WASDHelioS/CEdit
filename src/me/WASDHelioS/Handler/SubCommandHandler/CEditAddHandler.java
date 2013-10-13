@@ -42,14 +42,14 @@ public class CEditAddHandler {
             if (!ch.getCommandArgs(args).isEmpty()) {
                 if (!commands.contains("") && !commands.contains(null) && !ch.checkIfListHasAnEmptyValue(commands)) {
                     if (commands.size() == 2) {
-                        if (!ch.checkIfToCommandExists(ch.getCommandArgs(args).get(1))) {
+                        if (!ch.checkIfToCommandExists(ch.getCommandArgs(args).get(0))) {
 
-                            addCommand(commands.get(0), ch.getLocfrom());
-                            addCommand(commands.get(1), ch.getLocto());
+                            addCommand(commands.get(1), ch.getLocfrom());
+                            addCommand(commands.get(0), ch.getLocto());
 
                             ch.saveConfig(plugin);
 
-                            sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "Command added : from " + commands.get(0) + " to " + commands.get(1));
+                            sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "Command added : to " + commands.get(0) + " from " + commands.get(1));
                         } else {
                             sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "This ToCommand already exists!");
                         }

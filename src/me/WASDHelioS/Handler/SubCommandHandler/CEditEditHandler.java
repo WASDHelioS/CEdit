@@ -90,8 +90,8 @@ public class CEditEditHandler {
         List<String> fromList = plugin.getConfiguration().getStringList(ch.getLocfrom());
         List<String> toList = plugin.getConfiguration().getStringList(ch.getLocto());
 
-        fromList.set(index, cmds.get(0));
-        toList.set(index, cmds.get(1));
+        fromList.set(index, cmds.get(1));
+        toList.set(index, cmds.get(0));
 
         plugin.getConfiguration().set(ch.getLocfrom(), fromList);
         plugin.getConfiguration().set(ch.getLocto(), toList);
@@ -113,14 +113,14 @@ public class CEditEditHandler {
                     if (commands.size() == 2 && !commands.contains(null)) {
                         if (!ch.checkIfListHasAnEmptyValue(commands)) {
                             if (!commands.contains("")) {
-                                if (!ch.checkIfToCommandExists(commands.get(1))) {
-                                    if (ch.getFromCommandsList(plugin.getConfiguration()).size() >= index - 1) {
+                                if (!ch.checkIfToCommandExists(commands.get(0))) {
+                                    if (ch.getFromCommandsList(plugin.getConfiguration()).size() > index - 1) {
 
                                         replaceCommand(index - 1, commands);
 
                                         ch.saveConfig(plugin);
 
-                                        sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "Commands edited on index " + (index) + " to /" + commands.get(0) + " /" + commands.get(1));
+                                        sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "Commands edited on index :" + (index) + " to " + commands.get(0) + " from " + commands.get(1));
 
                                     } else {
                                         sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "The index is bigger than the size of the list!");
@@ -134,36 +134,39 @@ public class CEditEditHandler {
                         } else {
                             sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Cannot add empty commands!");
                         }
+                    } else if (ch.checkIfListHasAnAndChar(commands)) {
+                        if (!ch.checkIfListHasAnEmptyValue(commands)) {
+                            if (!args[0].equalsIgnoreCase("&") && !args[1].equalsIgnoreCase("&") && !args[2].equalsIgnoreCase("&") && !args[3].equalsIgnoreCase("&") && !args[4].equalsIgnoreCase("&")) {
+                                String commandfrom = null;
+                                for (int i = 1; i < commands.size(); i++) {
+                                    if (commands.get(i) != null) {
+                                        if (commandfrom == null) {
+                                            commandfrom = commands.get(i);
+                                        } else {
+                                            commandfrom = commandfrom + commands.get(i);
+                                        }
+                                    }
+                                }
+                                commands.set(1, commandfrom);
+                                replaceCommand(index - 1, commands);
+                                ch.saveConfig(plugin);
+
+                                sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "Commands edited on index : " + index + " to " + commands.get(0) + " from " + commands.get(1));
+                            } else {
+                                sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Faulty formatting! Did you misplace an '&'?");
+                            }
+                        } else {
+                            sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "You cannot add empty commands!");
+                        }
                     } else {
                         sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Invalid amount of arguments!");
                     }
 
                 } else {
-                    sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Negative values aren't allowed!");
+                    sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Negative or 0 values aren't allowed!");
                 }
-
-                //Edit on index
-                //Edit on 4 commands
             } else {
-
-                List<String> commands = ch.getCommandArgs(args);
-                if (commands.size() == 4 && !commands.contains(null)) {
-                    if (!commands.contains("") && !ch.checkIfListHasAnEmptyValue(commands)) {
-                        if (ch.checkIfFromCommandExists(commands.get(0)) && ch.checkIfToCommandExists(commands.get(1)) && !ch.checkIfToCommandExists(commands.get(3))) {
-                            replaceCommand(commands);
-
-                            ch.saveConfig(plugin);
-
-                            sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "Commands edited from /" + commands.get(0) + " /" + commands.get(1) + " to /" + commands.get(2) + " /" + commands.get(3));
-                        } else {
-                            sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Command does not exist!");
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "You cannot add empty commands!");
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Invalid amount of arguments!");
-                }
+                sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "This command does not exist!");
             }
         } else {
             sender.sendMessage(ChatColor.RED + "You do not have permission!");
@@ -182,6 +185,26 @@ public class CEditEditHandler {
                             ch.saveConfig(plugin);
 
                             sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "The command " + commands.get(0) + " has been remapped to execute " + commands.get(1) + "!");
+                        } else if (ch.checkIfListHasAnAndChar(commands)) {
+                            if (!args[0].equalsIgnoreCase("&") && !args[1].equalsIgnoreCase("&") && !args[2].equalsIgnoreCase("&")) {
+                                String commandfrom = null;
+                                for (int i = 1; i < commands.size(); i++) {
+                                    if (commands.get(i) != null) {
+                                        if (commandfrom == null) {
+                                            commandfrom = commands.get(i);
+                                        } else {
+                                            commandfrom = commandfrom + commands.get(i);
+                                        }
+                                    }
+                                }
+                                commands.set(1, commandfrom);
+                                replaceCommandToC(commands);
+                                ch.saveConfig(plugin);
+
+                                sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + "The command " + commands.get(0) + " has been remapped to execute " + commands.get(1) + "!");
+                            } else {
+                                sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Faulty formatting! Did you misplace an '&'?");
+                            }
                         } else {
                             sender.sendMessage(ChatColor.GOLD + ch.getCEdit() + ChatColor.RED + "Too few arguments! Did you forget a '/'?");
                         }
